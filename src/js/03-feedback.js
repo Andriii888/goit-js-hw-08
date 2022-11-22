@@ -1,22 +1,23 @@
+let throttleForVideo = require('lodash.throttle');
+
 const formRef = document.querySelector('.feedback-form');
 const inputEmailRef= document.querySelector('.feedback-form input');
 const inputMessageRef = document.querySelector('.feedback-form textarea');
-
-formRef.addEventListener('input', onWritingValue);
+const KEY = 'feedback-form-state';
+formRef.addEventListener('input', throttleForVideo(onWritingValue,500));
 const objValuesForm = {email:"",message:"",};
 
 function onWritingValue(e) {
    
     objValuesForm[e.target.name] = e.target.value;
     const string = JSON.stringify(objValuesForm);
-    localStorage.setItem('feedback-form-state', string);
+    localStorage.setItem(KEY, string);
 
 };
 
-// formRef.addEventListener('beforeunload ', listenerForStorage);
 
 function listenerForStorage() {
-    const getValues = localStorage.getItem('feedback-form-state');
+    const getValues = localStorage.getItem(KEY);
     const itValues = JSON.parse(getValues);
     if (getValues) {
         inputEmailRef.value = itValues.email;
@@ -32,4 +33,5 @@ function onSubmitForm(e) {
     alert(`email: ${objValuesForm.email}
     message: ${objValuesForm.message}`);
     e.currentTarget.reset();
+    localStorage.removeItem(KEY);
 }
