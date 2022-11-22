@@ -1,30 +1,35 @@
-const inputRef = document.querySelector('.feedback-form');
+const formRef = document.querySelector('.feedback-form');
+const inputEmailRef= document.querySelector('.feedback-form input');
+const inputMessageRef = document.querySelector('.feedback-form textarea');
 
-addEventListener('input', onWritingValue);
-const obj = {};
+formRef.addEventListener('input', onWritingValue);
+const objValuesForm = {email:"",message:"",};
+
 function onWritingValue(e) {
    
-   if (e.target.name === 'email') {
-   obj.email = e.target.value;
-    };
-    if (e.target.name === 'message') {
-        obj.message = e.target.value;
-    }
-   
-    const storageValue = JSON.stringify(obj);
-   
-    return localStorage.setItem('feedback-form-state', storageValue );
+    objValuesForm[e.target.name] = e.target.value;
+    const string = JSON.stringify(objValuesForm);
+    localStorage.setItem('feedback-form-state', string);
+
 };
 
-const inputEmail = inputRef.children[0];
-const inputMessage = inputRef.children[1];
+// formRef.addEventListener('beforeunload ', listenerForStorage);
+
 function listenerForStorage() {
-    const getValue = localStorage.getItem('feedback-form-state');
-    if (getValue === null) {
-        return console.log(getValue) ;
+    const getValues = localStorage.getItem('feedback-form-state');
+    const itValues = JSON.parse(getValues);
+    if (getValues) {
+        inputEmailRef.value = itValues.email;
+        inputMessageRef.value = itValues.message;
     }
-    const itValue = JSON.parse(getValue);
-    inputEmail.firstElementChild.textContent = itValue.email;
-    inputMessage.firstElementChild.textContent = itValue.message;
-};
+   };
 listenerForStorage();
+
+formRef.addEventListener('submit', onSubmitForm);
+
+function onSubmitForm(e) {
+    e.preventDefault();
+    alert(`email: ${objValuesForm.email}
+    message: ${objValuesForm.message}`);
+    e.currentTarget.reset();
+}
